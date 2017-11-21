@@ -6,14 +6,35 @@ Created on Fri Aug  4 19:19:31 2017
 """
 import requests
 import threading
+import sys
 import xml.etree.ElementTree as ET
 
 
+
+argsObj = {}
+for arg1, arg2 in zip(sys.argv[:-1], sys.argv[1:]):
+    if arg1[0] == '-':
+        argsObj[arg1] = arg2
+
 posts = []
 requestsNumber = 0
-pollInterval = 60
+try:
+    pollInterval = argsObj['-i']
+except AttributeError:
+    pollInterval = 60
+print 'set poll interval to ' + str(pollInterval)
+
+try:
+    url = argsObj['-url']
+except AttributeError:
+    url = 'http://denver.craigslist.org/search/sss?format=rss'
+if 'format=rss' not in url:
+    url = url + ('?' if '?' not in url else '&') + 'format=rss'
+print 'set url to ' + url
+
+
 searchQuery = ''
-searchCategoryCode = 'sss'
+searchCategoryCode = 'zip'
 
 
 class Post():
@@ -33,11 +54,10 @@ def set_interval(func, sec):
     t.start()
     return t
 
-
 def requestUrl():
     global requestsNumber
+    global url
     requestsNumber = requestsNumber + 1
-    url = 'http://denver.craigslist.org/search/' + searchCategoryCode +'?format=rss&query=' + searchQuery    
     req = requests.get(url)
     cdata = req.content.strip()
     parsedData = ET.fromstring(cdata)
@@ -59,4 +79,4 @@ def appendPost(xmlItem):
         posts.append(newPost)
 
 requestUrl()
-set_interval(requestUrl, pollInterval)
+# set_interval(requestUrl, pollInterval)
