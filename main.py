@@ -21,7 +21,6 @@ for arg1, arg2 in zip(sys.argv[:-1], sys.argv[1:]):
 
 posts = []
 requestsNumber = 0
-print argsObj
 try:
     url = argsObj['-url']
 except AttributeError:
@@ -76,7 +75,6 @@ def appendPost(xmlItem):
         if newPost.link == post.link:
             postFound = True
     if not postFound and not re.match('craigslist.+\|.+search', newPost.title):
-        print 'New post found', newPost.title, newPost.link
         posts.append(newPost)
     
 
@@ -97,4 +95,4 @@ def emailPost(newPostsArray):
     server.quit()
 
 requestUrl()
-# set_interval(requestUrl, pollInterval)
+set_interval(requestUrl, pollInterval)
