@@ -17,3 +17,4 @@ python main.py -url "https://phoenix.craigslist.org/search/msg?min_price=100&max
 
 * Using tmux or something like it helps because one can exit their terminal and the app will still run.
 * The first time this runs you'll get an email with like 25 new posts, it'll just be the new ones after that
+* If the email isn't a gmail, edit line 90 of main.py to connect to the correct port
