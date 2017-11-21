@@ -18,23 +18,17 @@ for arg1, arg2 in zip(sys.argv[:-1], sys.argv[1:]):
 
 posts = []
 requestsNumber = 0
-try:
-    pollInterval = argsObj['-i']
-except AttributeError:
-    pollInterval = 60
-print 'set poll interval to ' + str(pollInterval)
-
+print argsObj
 try:
     url = argsObj['-url']
 except AttributeError:
     url = 'http://denver.craigslist.org/search/sss?format=rss'
+
 if 'format=rss' not in url:
     url = url + ('?' if '?' not in url else '&') + 'format=rss'
 print 'set url to ' + url
 
-
-searchQuery = ''
-searchCategoryCode = 'zip'
+pollInterval = 300
 
 
 class Post():
