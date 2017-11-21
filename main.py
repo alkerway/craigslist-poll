@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Fri Aug  4 19:19:31 2017
 
@@ -30,7 +29,7 @@ if 'format=rss' not in url:
     url = url + ('?' if '?' not in url else '&') + 'format=rss'
 print 'set url to ' + url
 
-pollInterval = 300
+pollInterval = 900
 
 
 class Post():
@@ -91,7 +90,7 @@ def emailPost(newPostsArray):
     server.connect("smtp.gmail.com", 465)
     server.ehlo()
     server.login(email, toPass)    
-    server.sendmail(email, email, msg)
+    server.sendmail(email, email, msg.encode('utf-8'))
     server.quit()
 
 requestUrl()
