@@ -7,7 +7,10 @@ Created on Fri Aug  4 19:19:31 2017
 import requests
 import threading
 import sys
+import re
 import xml.etree.ElementTree as ET
+import smtplib
+from credentials import *
 
 
 
@@ -54,9 +57,13 @@ def requestUrl():
     requestsNumber = requestsNumber + 1
     req = requests.get(url)
     cdata = req.content.strip()
+    prevLength = len(posts)
     parsedData = ET.fromstring(cdata)
     for itemTag in parsedData:
         appendPost(itemTag)
+    if len(posts) > prevLength:
+        print 'Aggregated', len(posts[prevLength:]), 'new posts'
+        emailPost(posts[prevLength:])
     print 'Number of requests: ', requestsNumber
 
 def appendPost(xmlItem):
@@ -68,9 +75,26 @@ def appendPost(xmlItem):
     for post in posts:
         if newPost.link == post.link:
             postFound = True
-    if not postFound:
+    if not postFound and not re.match('craigslist.+\|.+search', newPost.title):
         print 'New post found', newPost.title, newPost.link
         posts.append(newPost)
+    
+
+def emailPost(newPostsArray):
+    msg = ''
+    for post in newPostsArray:
+        msg += post.title + '\n'
+        if (post.description):
+            msg += post.description + '\n'
+        msg += post.link + '\n  \n \n'
+
+    toPass = password
+    server = smtplib.SMTP_SSL()
+    server.connect("smtp.gmail.com", 465)
+    server.ehlo()
+    server.login(email, toPass)    
+    server.sendmail(email, email, msg)
+    server.quit()
 
 requestUrl()
 # set_interval(requestUrl, pollInterval)
