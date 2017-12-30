@@ -52,16 +52,16 @@ def set_interval(func, sec):
 def requestUrl():
     global requestsNumber
     global url
-    requestsNumber = requestsNumber + 1
     req = requests.get(url)
     cdata = req.content.strip()
     prevLength = len(posts)
     parsedData = ET.fromstring(cdata)
     for itemTag in parsedData:
         appendPost(itemTag)
-    if len(posts) > prevLength:
+    if len(posts) > prevLength and requestsNumber > 0:
         print 'Aggregated', len(posts[prevLength:]), 'new posts'
-        emailPost(posts[prevLength:])
+        emailPosts(posts[prevLength:])
+    requestsNumber = requestsNumber + 1
     print 'Number of requests: ', requestsNumber
 
 def appendPost(xmlItem):
@@ -77,7 +77,7 @@ def appendPost(xmlItem):
         posts.append(newPost)
     
 
-def emailPost(newPostsArray):
+def emailPosts(newPostsArray):
     msg = ''
     for post in newPostsArray:
         msg += post.title + '\n'
