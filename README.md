@@ -16,4 +16,4 @@ python main.py -url "https://phoenix.craigslist.org/search/msg?min_price=100&max
 ### Notes
 
 * If the email isn't a gmail, edit line 90 of main.py to connect to the correct port
-* You may have to [allow less secure apps](https://myaccount.google.com/lesssecureapps) to access your account
+* You may have to [allow less secure apps](https://myaccount.google.com/lesssecureapps) to access your email
