@@ -4,7 +4,7 @@ Python app that polls craigslist on a url or filter and emails any new listings 
 The poll interval is set to 15 minutes because that is the interval Craigslist uses to push up posts to the rss api.
 
 ### How to use
-1. Have python installed
+1. Have python 2 installed
 2. Clone the repo
 3. Enter in your email credentials to example file credentials.py (email yourself from your own email)
 1. Get desired url by searching craigslist  for what you want (example: 
