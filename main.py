@@ -58,7 +58,6 @@ def requestUrl():
     parsedData = ET.fromstring(cdata)
     for itemTag in parsedData:
         appendPost(itemTag)
-    print len(posts), prevLength
     if len(posts) > prevLength and requestsNumber > 0:
         print 'Aggregated', len(posts[prevLength:]), 'new posts'
         emailPosts(posts[prevLength:])
