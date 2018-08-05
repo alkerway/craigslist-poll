@@ -7,11 +7,8 @@ import requests
 import threading
 import sys
 import re
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 import smtplib
-from credentials import *
-
-
 
 argsObj = {}
 for arg1, arg2 in zip(sys.argv[:-1], sys.argv[1:]):
@@ -20,14 +17,17 @@ for arg1, arg2 in zip(sys.argv[:-1], sys.argv[1:]):
 
 posts = []
 requestsNumber = 0
+
 try:
     url = argsObj['-url']
-except AttributeError:
-    url = 'http://denver.craigslist.org/search/sss?format=rss'
+except KeyError:
+    print('no url provided, exiting')
+    sys.exit()
+    
 
 if 'format=rss' not in url:
     url = url + ('?' if '?' not in url else '&') + 'format=rss'
-print 'set url to ' + url
+print('set url to ' + url)
 
 pollInterval = 900
 
@@ -55,14 +55,15 @@ def requestUrl():
     req = requests.get(url)
     cdata = req.content.strip()
     prevLength = len(posts)
-    parsedData = ET.fromstring(cdata)
+    parsedData = ElementTree.fromstring(cdata)
+    print(url, parsedData)
     for itemTag in parsedData:
         appendPost(itemTag)
     if len(posts) > prevLength and requestsNumber > 0:
-        print 'Aggregated', len(posts[prevLength:]), 'new posts'
+        print('Aggregated', len(posts[prevLength:]), 'new posts')
         emailPosts(posts[prevLength:])
     requestsNumber += 1
-    print 'Number of requests: ', requestsNumber
+    print('Number of requests: ', requestsNumber)
 
 def appendPost(xmlItem):
     postFound = False
@@ -94,4 +95,4 @@ def emailPosts(newPostsArray):
     server.quit()
 
 requestUrl()
-set_interval(requestUrl, pollInterval)
+# set_interval(requestUrl, pollInterval)
