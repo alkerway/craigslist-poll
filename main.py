@@ -89,6 +89,7 @@ def emailPosts(newPostsArray):
     fromEmail = os.environ['CPOLL_FROMEMAIL']
     toEmail = os.environ['CPOLL_TOEMAIL']
     server = smtplib.SMTP_SSL()
+
     server.connect("smtp.gmail.com", 465)
     server.ehlo()
     server.login(fromEmail, fromPass)
