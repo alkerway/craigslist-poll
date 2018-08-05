@@ -3,10 +3,11 @@ Created on Fri Aug  4 19:19:31 2017
 
 @author: aw1042
 """
-import requests
+import urllib.request
 import threading
 import sys
 import re
+import os
 from xml.etree import ElementTree
 import smtplib
 
@@ -52,14 +53,12 @@ def set_interval(func, sec):
 def requestUrl():
     global requestsNumber
     global url
-    req = requests.get(url)
-    cdata = req.content.strip()
+    req = urllib.request.urlopen(url).read()
     prevLength = len(posts)
-    parsedData = ElementTree.fromstring(cdata)
-    print(url, parsedData)
-    for itemTag in parsedData:
+    parsedData = ElementTree.fromstring(req)
+    for itemTag in parsedData.getchildren():
         appendPost(itemTag)
-    if len(posts) > prevLength and requestsNumber > 0:
+    if len(posts) > prevLength:
         print('Aggregated', len(posts[prevLength:]), 'new posts')
         emailPosts(posts[prevLength:])
     requestsNumber += 1
@@ -67,9 +66,9 @@ def requestUrl():
 
 def appendPost(xmlItem):
     postFound = False
-    title = xmlItem[0].text
-    link = xmlItem[1].text
-    description = xmlItem[2].text
+    title = xmlItem.getchildren()[0].text
+    link = xmlItem.getchildren()[1].text
+    description = xmlItem.getchildren()[2].text
     newPost = Post(title, link, description)
     for post in posts:
         if newPost.link == post.link:
@@ -86,13 +85,15 @@ def emailPosts(newPostsArray):
             msg += post.description + '\n'
         msg += post.link + '\n  \n \n'
 
-    toPass = password
+    fromPass = os.environ['CPOLL_PW']
+    fromEmail = os.environ['CPOLL_FROMEMAIL']
+    toEmail = os.environ['CPOLL_TOEMAIL']
     server = smtplib.SMTP_SSL()
     server.connect("smtp.gmail.com", 465)
     server.ehlo()
-    server.login(email, toPass)    
-    server.sendmail(email, email, msg.encode('utf-8'))
+    server.login(fromEmail, fromPass)
+    server.sendmail(fromEmail, toEmail, msg.encode('utf-8'))
     server.quit()
 
 requestUrl()
-# set_interval(requestUrl, pollInterval)
+set_interval(requestUrl, pollInterval)
